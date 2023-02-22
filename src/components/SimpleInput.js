@@ -4,15 +4,16 @@ const SimpleInput = (props) => {
   // const inputRef = useRef();
   const [nameError, setNameError] = useState(true);
   const [enteredName, setEnteredName] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
+  const [showNameErrorText, setShowNameErrorText] = useState(
+    nameError && nameTouched
+  );
+
   const [emailError, setEmailError] = useState(true);
   const [enteredEmail, setEnteredEmail] = useState("");
-  const [nameTouched, setNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [showEmailErrorText, setShowEmailErrorText] = useState(
     emailError && emailTouched
-  );
-  const [showNameErrorText, setShowNameErrorText] = useState(
-    nameError && nameTouched
   );
 
   // let showNameErrorText = nameError && nameTouched;
