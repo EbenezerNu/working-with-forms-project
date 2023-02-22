@@ -1,134 +1,89 @@
-import { useState } from "react";
+// import { useState } from "react";
+import useInput from "../hooks/use-input";
 
 const SimpleInput = (props) => {
-  // const inputRef = useRef();
-  const [nameError, setNameError] = useState(true);
-  const [enteredName, setEnteredName] = useState("");
-  const [nameTouched, setNameTouched] = useState(false);
-  const [showNameErrorText, setShowNameErrorText] = useState(
-    nameError && nameTouched
-  );
+  const {
+    error: nameError,
+    enteredInput: nameEnteredInput,
+    inputTouched: nameTouched,
+    showError: showNameError,
+    inputBlurHandler: nameBlurHandler,
+    inputChangeHandler: nameChangeHandler,
+  } = useInput({
+    onChange: (e) => e.target.value.trim().length === 0,
+  });
 
-  const [emailError, setEmailError] = useState(true);
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [showEmailErrorText, setShowEmailErrorText] = useState(
-    emailError && emailTouched
-  );
-
-  // let showNameErrorText = nameError && nameTouched;
-  // let showEmailErrorText = emailError && emailTouched;
-
-  const setErrorHandler = (args) => {
-    args.setError(true);
-    args.setShowErrorText(true);
-    return setTimeout(() => {
-      args.setShowErrorText(false);
-    }, 1500);
-  };
-
-  const nameInputBlurHandler = () => {
-    setNameTouched(true);
-    if (nameError) {
-      focusType = "name";
-      setErrorHandler({
-        setError: setNameError,
-        setShowErrorText: setShowNameErrorText,
-      });
-    }
-  };
-
-  const emailInputBlurHandler = () => {
-    setEmailTouched(true);
-    if (emailError) {
-      focusType = "email";
-      setErrorHandler({
-        setError: setEmailError,
-        setShowErrorText: setShowEmailErrorText,
-      });
-    }
-  };
-  const nameInputChangeHandler = (e) => {
-    setEnteredName(e.target.value);
-    if (e.target.value.trim().length === 0) {
-      setNameError(true);
-      // inputRef.current.style.border = "1px solid red";
-      // inputRef.current.style.borderCorlor = "#240370";
-    } else {
-      setNameError(false);
-      // inputRef.current.style.borderCorlor = "none";
-      // inputRef.current.style.border = "1px solid black";
-    }
-  };
-
-  const emailInputChangeHandler = (e) => {
-    setEnteredEmail(e.target.value);
-    if (
+  const {
+    error: emailError,
+    enteredInput: emailEnteredInput,
+    inputTouched: emailTouched,
+    showError: showEmailError,
+    inputBlurHandler: emailBlurHandler,
+    inputChangeHandler: emailChangeHandler,
+  } = useInput({
+    onChange: (e) =>
       e.target.value.trim().search("@") <= 0 ||
-      e.target.value.trim().search("@") >= e.target.value.trim().length - 1
-    ) {
-      setEmailError(true);
-      // inputRef.current.style.border = "1px solid red";
-      // inputRef.current.style.borderCorlor = "#240370";
-    } else {
-      setEmailError(false);
-      // inputRef.current.style.borderCorlor = "none";
-      // inputRef.current.style.border = "1px solid black";
-    }
-  };
+      e.target.value.trim().search("@") >= e.target.value.trim().length - 1,
+  });
 
-  let focusType = "";
+  // let focusType = "";
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    if (!emailError && !nameError) {
+    if (!emailError.value && !nameError.value) {
       console.log(
         "Submitting \nName : ",
-        enteredName,
+        nameEnteredInput.value,
         "\nEmail : ",
-        enteredEmail
+        emailEnteredInput.value
       );
-      setEnteredName("");
-      setEnteredEmail("");
-      setNameTouched(false);
-      setEmailTouched(false);
-      setEmailError(true);
-      setNameError(true);
+      nameEnteredInput.setState("");
+      emailEnteredInput.setState("");
+      nameTouched.setState(false);
+      emailTouched.setState(false);
+      emailError.setState(true);
+      nameError.setState(true);
     }
   };
 
   let formError = true;
-  if (!nameError && !emailError) {
+  if (!nameError.value && !emailError.value) {
     formError = false;
   }
 
   return (
     <form>
-      <div className={`form-control ${nameTouched && nameError && "invalid"}`}>
+      <div
+        className={`form-control ${
+          nameTouched.value && nameError.value && "invalid"
+        }`}
+      >
         <label htmlFor="name">Your Name</label>
         <input
           type="text"
           id="name"
-          onChange={nameInputChangeHandler}
-          onBlur={nameInputBlurHandler}
-          value={enteredName}
-          {...(focusType === "name" ? `focus='true'` : "")}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
+          value={nameEnteredInput.value}
+          // {...(focusType === "name" ? `focus='true'` : "")}
         />
       </div>
-      {showNameErrorText && <p className="error-text">Invalid Name!</p>}
+      {showNameError.value && <p className="error-text">Invalid Name!</p>}
       <div
-        className={`form-control ${emailTouched && emailError && "invalid"}`}
+        className={`form-control ${
+          emailTouched.value && emailError.value && "invalid"
+        }`}
       >
         <label htmlFor="email">Your Email</label>
         <input
           type="email"
           id="email"
-          onChange={emailInputChangeHandler}
-          onBlur={emailInputBlurHandler}
-          value={enteredEmail}
-          {...(focusType === "email" ? `focus='true'` : "")}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
+          value={emailEnteredInput.value}
+          // {...(focusType === "email" ? `focus='true'` : "")}
         />
       </div>
-      {showEmailErrorText && <p className="error-text">Invalid Email!</p>}
+      {showEmailError.value && <p className="error-text">Invalid Email!</p>}
       <div className="form-actions">
         <button onClick={formSubmitHandler} disabled={formError}>
           Submit
