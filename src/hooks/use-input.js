@@ -29,31 +29,26 @@ const useInput = (props) => {
   const onChangeHandler = (e) => {
     setEnteredInput(e.target.value);
     if (props.onChange(e)) {
-      setInputError(true);
-    } else {
       setInputError(false);
+    } else {
+      setInputError(true);
     }
   };
 
+  const resetInputHandler = () => {
+    setInputTouched(false);
+    setInputError(true);
+    setEnteredInput("");
+  };
+
   return {
-    error: {
-      value: inputError,
-      setState: setInputError,
-    },
-    enteredInput: {
-      value: enteredInput,
-      setState: setEnteredInput,
-    },
-    inputTouched: {
-      value: inputTouched,
-      setState: setInputTouched,
-    },
-    showError: {
-      value: showErrorText,
-      setState: setShowErrorText,
-    },
+    isError: inputError,
+    enteredInput: enteredInput,
+    inputTouched: inputTouched,
+    showError: showErrorText,
     inputBlurHandler: inputBlurHandler,
     inputChangeHandler: onChangeHandler,
+    resetInputHandler: resetInputHandler,
   };
 };
 

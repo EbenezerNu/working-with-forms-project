@@ -3,59 +3,56 @@ import useInput from "../hooks/use-input";
 
 const SimpleInput = (props) => {
   const {
-    error: nameError,
+    isError: nameError,
     enteredInput: nameEnteredInput,
     inputTouched: nameTouched,
     showError: showNameError,
     inputBlurHandler: nameBlurHandler,
     inputChangeHandler: nameChangeHandler,
+    resetInputHandler: nameResetHandler,
   } = useInput({
-    onChange: (e) => e.target.value.trim().length === 0,
+    onChange: (e) => e.target.value != null && e.target.value.trim().length > 0,
   });
 
   const {
-    error: emailError,
+    isError: emailError,
     enteredInput: emailEnteredInput,
     inputTouched: emailTouched,
     showError: showEmailError,
     inputBlurHandler: emailBlurHandler,
     inputChangeHandler: emailChangeHandler,
+    resetInputHandler: emailResetHandler,
   } = useInput({
     onChange: (e) =>
-      e.target.value.trim().search("@") <= 0 ||
-      e.target.value.trim().search("@") >= e.target.value.trim().length - 1,
+      e.target.value.trim().search("@") > 0 &&
+      e.target.value.trim().search("@") < e.target.value.trim().length - 1,
   });
 
   // let focusType = "";
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    if (!emailError.value && !nameError.value) {
+    if (!emailError && !nameError) {
       console.log(
         "Submitting \nName : ",
-        nameEnteredInput.value,
+        nameEnteredInput,
         "\nEmail : ",
-        emailEnteredInput.value
+        emailEnteredInput
       );
-      nameEnteredInput.setState("");
-      emailEnteredInput.setState("");
-      nameTouched.setState(false);
-      emailTouched.setState(false);
-      emailError.setState(true);
-      nameError.setState(true);
+
+      nameResetHandler();
+      emailResetHandler();
     }
   };
 
   let formError = true;
-  if (!nameError.value && !emailError.value) {
+  if (!nameError && !emailError) {
     formError = false;
   }
 
   return (
     <form>
       <div
-        className={`form-control ${
-          nameTouched.value && nameError.value && "invalid"
-        }`}
+        className={`form-control ${nameTouched && nameError ? "invalid" : ""}`}
       >
         <label htmlFor="name">Your Name</label>
         <input
@@ -63,14 +60,14 @@ const SimpleInput = (props) => {
           id="name"
           onChange={nameChangeHandler}
           onBlur={nameBlurHandler}
-          value={nameEnteredInput.value}
+          value={nameEnteredInput}
           // {...(focusType === "name" ? `focus='true'` : "")}
         />
       </div>
-      {showNameError.value && <p className="error-text">Invalid Name!</p>}
+      {showNameError && <p className="error-text">Invalid Name!</p>}
       <div
         className={`form-control ${
-          emailTouched.value && emailError.value && "invalid"
+          emailTouched && emailError ? "invalid" : ""
         }`}
       >
         <label htmlFor="email">Your Email</label>
@@ -79,11 +76,11 @@ const SimpleInput = (props) => {
           id="email"
           onChange={emailChangeHandler}
           onBlur={emailBlurHandler}
-          value={emailEnteredInput.value}
+          value={emailEnteredInput}
           // {...(focusType === "email" ? `focus='true'` : "")}
         />
       </div>
-      {showEmailError.value && <p className="error-text">Invalid Email!</p>}
+      {showEmailError && <p className="error-text">Invalid Email!</p>}
       <div className="form-actions">
         <button onClick={formSubmitHandler} disabled={formError}>
           Submit
