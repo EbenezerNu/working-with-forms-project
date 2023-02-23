@@ -87,7 +87,8 @@ button:disabled {
 }
 
 .form-actions {
-  text-align: right;
+  /* text-align: right; */
+  text-align: center;
 }
 
 .form-actions button {
@@ -106,4 +107,11 @@ button:disabled {
 
 .error-text {
   color: #b40e0e;
+}
+
+.basic-form {
+  display: flex;
+  /* text-align: center; */
+  flex-flow: column;
+  align-items: center;
 }

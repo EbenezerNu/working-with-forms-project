@@ -4,7 +4,7 @@ const BasicForm = (props) => {
     isError: firstNameError,
     inputTouched: firstNameInputTouched,
     inputChangeHandler: firstNameInputChangeHandler,
-    inputBlurhandler: firstNameInputBlurHandler,
+    inputBlurHandler: firstNameInputBlurHandler,
     enteredInput: firstNameInputEntered,
     showError: showFirstNameError,
     resetInputHandler: firstNameInputResetHandler,
@@ -15,13 +15,13 @@ const BasicForm = (props) => {
   const {
     isError: lastNameError,
     inputTouched: lastNameInputTouched,
-    inputChangeHandler: lastNameInputChangeHandler,
-    inputBlurhandler: lastNameInputBlurHandler,
     enteredInput: lastNameInputEntered,
     showError: showLastNameError,
+    inputChangeHandler: lastNameInputChangeHandler,
+    inputBlurHandler: lastNameInputBlurHandler,
     resetInputHandler: lastNameInputResetHandler,
   } = useInput({
-    onChange: (e) => e.target.value != null && e.target.value.trim().length > 0,
+    onChange: (e) => e.target.value.trim().length > 0,
   });
 
   const {
@@ -38,9 +38,35 @@ const BasicForm = (props) => {
       e.target.value.trim().search("@") < e.target.value.trim().length - 1,
   });
 
+  const {
+    isError: passwordError,
+    inputTouched: passwordInputTouched,
+    enteredInput: passwordInputEntered,
+    showError: showPasswordError,
+    inputChangeHandler: passwordInputChangeHandler,
+    inputBlurHandler: passwordInputBlurHandler,
+    resetInputHandler: passwordInputResetHandler,
+  } = useInput({
+    onChange: (e) => e.target.value.trim().length > 8,
+  });
+
+  const {
+    isError: confirmPasswordError,
+    inputTouched: confirmPasswordInputTouched,
+    enteredInput: confirmPasswordInputEntered,
+    showError: showConfirmPasswordError,
+    inputChangeHandler: confirmPasswordInputChangeHandler,
+    inputBlurHandler: confirmPasswordInputBlurHandler,
+    resetInputHandler: confirmPasswordInputResetHandler,
+  } = useInput({
+    onChange: (e) =>
+      e.target.value.trim().length > 8 &&
+      e.target.value.trim() === passwordInputEntered,
+  });
+
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    if (emailError || firstNameError || lastNameError) {
+    if (emailError || firstNameError || lastNameError || confirmPasswordError) {
       return;
     }
     console.log(
@@ -50,54 +76,62 @@ const BasicForm = (props) => {
       " ",
       lastNameInputEntered,
       "\nEmail: ",
-      emailInputEntered
+      emailInputEntered,
+      "\nPassword: ",
+      passwordInputEntered
     );
     firstNameInputResetHandler();
     lastNameInputResetHandler();
     emailInputResetHandler();
+    passwordInputResetHandler();
+    confirmPasswordInputResetHandler();
   };
 
   let formError = true;
-  if (!firstNameError && !lastNameError && !emailError) {
+  if (
+    !firstNameError &&
+    !lastNameError &&
+    !emailError &&
+    !passwordError &&
+    !confirmPasswordError
+  ) {
     formError = false;
   }
 
   return (
-    <form>
-      <div className="control-group">
-        <div
-          className={`form-control ${
-            firstNameInputTouched && firstNameError ? "invalid" : ""
-          }`}
-        >
-          <label htmlFor="name">First Name</label>
-          <input
-            type="text"
-            id="firstName"
-            value={firstNameInputEntered}
-            onChange={firstNameInputChangeHandler}
-            onBlur={firstNameInputBlurHandler}
-          />
-          {showFirstNameError && (
-            <p className="error-text">Invalid FirstName!</p>
-          )}
-        </div>
-        <div
-          className={`form-control ${
-            lastNameInputTouched && lastNameError ? "invalid" : ""
-          }`}
-        >
-          <label htmlFor="name">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
-            value={lastNameInputEntered}
-            onChange={lastNameInputChangeHandler}
-            onBlur={lastNameInputBlurHandler}
-          />
-          {showLastNameError && <p className="error-text">Invalid LastName!</p>}
-        </div>
+    <form className="basic-form">
+      {/* <div className="control-group"> */}
+      <div
+        className={`form-control ${
+          firstNameInputTouched && firstNameError ? "invalid" : ""
+        }`}
+      >
+        <label htmlFor="name">First Name</label>
+        <input
+          type="text"
+          id="firstName"
+          value={firstNameInputEntered}
+          onChange={firstNameInputChangeHandler}
+          onBlur={firstNameInputBlurHandler}
+        />
+        {showFirstNameError && <p className="error-text">Invalid FirstName!</p>}
       </div>
+      <div
+        className={`form-control ${
+          lastNameInputTouched && lastNameError ? "invalid" : ""
+        }`}
+      >
+        <label htmlFor="name">Last Name</label>
+        <input
+          type="text"
+          id="lastName"
+          value={lastNameInputEntered}
+          onChange={lastNameInputChangeHandler}
+          onBlur={lastNameInputBlurHandler}
+        />
+        {showLastNameError && <p className="error-text">Invalid LastName!</p>}
+      </div>
+      {/* </div> */}
       <div
         className={`form-control ${
           emailInputTouched && emailError ? "invalid" : ""
@@ -113,10 +147,48 @@ const BasicForm = (props) => {
         />
         {showEmailError && <p className="error-text">Invalid Email!</p>}
       </div>
-      <div className="form-actions">
-        <button disabled={formError} type="submit" onSubmit={formSubmitHandler}>
-          Submit
-        </button>
+      <div
+        className={`form-control ${
+          passwordInputTouched && passwordError ? "invalid" : ""
+        }`}
+      >
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          value={passwordInputEntered}
+          onChange={passwordInputChangeHandler}
+          onBlur={passwordInputBlurHandler}
+        />
+        {showPasswordError && <p className="error-text">Invalid Password!</p>}
+      </div>
+      <div
+        className={`form-control ${
+          confirmPasswordInputTouched && confirmPasswordError ? "invalid" : ""
+        }`}
+      >
+        <label htmlFor="password">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm-password"
+          value={confirmPasswordInputEntered}
+          onChange={confirmPasswordInputChangeHandler}
+          onBlur={confirmPasswordInputBlurHandler}
+        />
+        {showConfirmPasswordError && (
+          <p className="error-text">Invalid Confirm Password!</p>
+        )}
+      </div>
+      <div className="form-control">
+        <div className="form-actions">
+          <button
+            disabled={formError}
+            type="button"
+            onClick={formSubmitHandler}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </form>
   );
