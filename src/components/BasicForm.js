@@ -47,7 +47,7 @@ const BasicForm = (props) => {
     inputBlurHandler: passwordInputBlurHandler,
     resetInputHandler: passwordInputResetHandler,
   } = useInput({
-    onChange: (e) => e.target.value.trim().length > 8,
+    onChange: (e) => e.target.value.trim().length > 7,
   });
 
   const {
@@ -60,7 +60,7 @@ const BasicForm = (props) => {
     resetInputHandler: confirmPasswordInputResetHandler,
   } = useInput({
     onChange: (e) =>
-      e.target.value.trim().length > 8 &&
+      e.target.value.trim().length > 7 &&
       e.target.value.trim() === passwordInputEntered,
   });
 
